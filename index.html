@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - Instanter Download Fix</title>
+    <title>Beta Dash - One-Click Fix</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: #0b0f19;
             color: #ffffff;
             display: flex;
@@ -17,12 +17,12 @@
         }
         .container {
             background-color: #161d2b;
-            padding: 30px;
+            padding: 35px;
             border-radius: 12px;
             border: 2px solid #00ff66;
             box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
             text-align: center;
-            max-width: 460px;
+            max-width: 480px;
             width: 100%;
         }
         h1 {
@@ -30,92 +30,55 @@
             margin-bottom: 10px;
             font-size: 24px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
         p {
             color: #94a3b8;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             line-height: 1.5;
         }
-        input[type="text"] {
-            width: 88%;
-            padding: 12px;
-            border: 2px solid #2d3748;
-            border-radius: 6px;
-            background-color: #1f293d;
-            color: #ffffff;
-            font-size: 14px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: border-color 0.3s;
+        ol {
+            text-align: left;
+            color: #ccd6e0;
+            font-size: 13.5px;
+            margin-bottom: 25px;
+            padding-left: 20px;
         }
-        input[type="text"]:focus {
-            border-color: #00ff66;
-        }
-        button {
+        li { margin-bottom: 10px; }
+        .bookmark-btn {
+            display: inline-block;
             background-color: #00ff66;
             color: #0b0f19;
-            border: none;
-            padding: 12px 28px;
+            padding: 14px 30px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: move; /* Zeigt an, dass man es ziehen kann */
             transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(0, 255, 102, 0.3);
         }
-        button:hover {
+        .bookmark-btn:hover {
             background-color: #00dd55;
-        }
-        button:active {
-            transform: scale(0.98);
-        }
-        .error {
-            color: #ff4a4a;
-            margin-top: 15px;
-            font-size: 14px;
-            display: none;
-            font-weight: bold;
+            box-shadow: 0 6px 16px rgba(0, 255, 102, 0.5);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Beta Dash Link-Fixer</h1>
-    <p>Füge einfach den normalen Spiele-Link aus der Aippy-Adresszeile ein, um das Spiel direkt unblockiert zu starten!</p>
+    <h1>Beta Dash Download-Fix</h1>
+    <p>Aippy blockiert direkte Links. Nutze diesen sicheren 1-Klick-Trick ohne Downloads oder nervige Konsolen:</p>
     
-    <input type="text" id="aippyUrl" placeholder="https://aippy.ai" autocomplete="off">
-    <br>
-    <button onclick="convertAndOpen()">Spiel unblockiert öffnen</button>
+    <ol>
+        <li>Ziehe den neongrünen Button unten einfach mit der Maus hoch in deine <strong>Lesezeichenleiste</strong> im Browser (Strg+Shift+B drücken, falls sie ausgeblendet ist).</li>
+        <li>Gehe auf Aippy zu JEDEM beliebigen Spiel deiner Wahl.</li>
+        <li>Klicke oben in deiner Leiste auf das neue Lesezeichen. Das Spiel öffnet sich sofort unblockiert und bereit zum Download!</li>
+    </ol>
     
-    <div id="errorMessage" class="error"></div>
+    <!-- Das ist der magische JavaScript-Befehl verpackt als Link -->
+    <a class="bookmark-btn" href="javascript:(function(){const f=document.getElementsByTagName('iframe');if(f.length>0){for(let i=0;i<f.length;i++){if(f[i].src.includes('aippy.live')){window.open(f[i].src,'_blank');return;}}}alert('Kein Aippy-Spiel auf dieser Seite gefunden! Stelle sicher, dass du dich direkt auf der Spieleseite befindest.');})();">🚀 Aippy Unblocker</a>
 </div>
-
-<script>
-function convertAndOpen() {
-    const input = document.getElementById('aippyUrl').value.trim();
-    const errorDiv = document.getElementById('errorMessage');
-    errorDiv.style.display = "none"; 
-
-    if (!input || !input.includes("aippy.ai/")) {
-        errorDiv.innerText = "Bitte füge einen gültigen aippy.ai Link ein!";
-        errorDiv.style.display = "block";
-        return;
-    }
-
-    // Wandelt den normalen Link vollautomatisch in die IFrame-freie Embed-Ansicht um
-    if (input.includes("aippy.ai/@")) {
-        const targetUrl = input.replace("aippy.ai/", "aippy.ai/embed/");
-        
-        // Öffnet das Spiel im Vollbild – der Download-Button funktioniert sofort!
-        window.open(targetUrl, '_blank');
-    } else {
-        errorDiv.innerText = "Ungültiges Linkformat. Der Link muss ein '@' Zeichen enthalten.";
-        errorDiv.style.display = "block";
-    }
-}
-</script>
 
 </body>
 </html>
