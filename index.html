@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aippy Live Link Extractor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+        h1 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        p {
+            color: #aaaaaa;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        input[type="text"] {
+            width: 85%;
+            padding: 12px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #00ff88;
+        }
+        button {
+            background-color: #00ff88;
+            color: #121212;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #00cc6e;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .error {
+            color: #ff4a4a;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Aippy Downloader Fix</h1>
+    <p>Paste any unique Aippy project link below to dynamically open its full live site!</p>
+    
+    <input type="text" id="projectUrl" placeholder="https://aippy.ai" autocomplete="off">
+    <br>
+    <button onclick="openLiveUrl()">Open Live Game</button>
+    
+    <div id="errorMessage" class="error"></div>
+</div>
+
+<script>
+function openLiveUrl() {
+    const input = document.getElementById('projectUrl').value.trim();
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.style.display = "none"; 
+
+    if (!input) {
+        errorDiv.innerText = "Please enter a valid URL.";
+        errorDiv.style.display = "block";
+        return;
+    }
+
+    // Dynamic Extraction: Splits the URL by dashes and grabs the absolute final segment 
+    // (the unique alphanumeric code), removing trailing slashes if present.
+    const cleanUrl = input.replace(/\/\$/, ""); 
+    const urlParts = cleanUrl.split("-");
+    const projectId = urlParts[urlParts.length - 1];
+
+    // Ensures the code found looks like a valid alphanumeric project ID snippet
+    if (projectId && projectId.length >= 3) {
+        // Automatically formats the correct iframe-free subdomain for this specific game
+        const targetLiveUrl = `https://aippy.live{projectId}`;
+
+        // Triggers the window break-out to open the specific game page
+        window.open(targetLiveUrl, '_blank');
+    } else {
+        errorDiv.innerText = "Could not find a valid project ID at the end of the link. Make sure it looks like game-name-XXXX.";
+        errorDiv.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>
