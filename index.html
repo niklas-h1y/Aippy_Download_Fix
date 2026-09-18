@@ -81,9 +81,9 @@
 
 <div class="container">
     <h1>Aippy Download-Fix</h1>
-    <p>Füge hier den kopierten <strong>src-Link</strong> oder den ganzen <strong>&lt;iframe&gt;-Code</strong> aus Eruda ein, um das Spiel mit funktionierendem Download direkt zu öffnen!</p>
+    <p>Füge einfach den normalen Spiel-Link (aippy.ai) ODER den src-Link aus der Konsole hier ein.</p>
     
-    <textarea id="rawInput" placeholder="Hier den Link oder Iframe-Code einfügen (z.B. https://...)"></textarea>
+    <textarea id="rawInput" placeholder="Z. B. https://aippy.ai"></textarea>
     <br>
     <button onclick="extractAndOpen()">Spiel live öffnen</button>
     
@@ -92,38 +92,50 @@
 
 <script>
 function extractAndOpen() {
-    const input = document.getElementById('rawInput').value.trim();
+    let input = document.getElementById('rawInput').value.trim();
     const errorDiv = document.getElementById('errorMessage');
     errorDiv.style.display = "none"; 
 
     if (!input) {
-        errorDiv.innerText = "Bitte füge zuerst etwas ein.";
+        errorDiv.innerText = "Bitte füge zuerst einen Link ein.";
         errorDiv.style.display = "block";
         return;
     }
 
-    let targetUrl = "";
-
-    // Falls der Nutzer den ganzen <iframe src="..."> Code eingefügt hat, filtern wir die URL heraus
+    // 1. Check: Handelt es sich um den extrahierten Iframe-Code aus der Konsole?
     if (input.includes("src=")) {
         const srcMatch = input.match(/src=["'](https:\/\/[^"']+)["']/);
         if (srcMatch && srcMatch[1]) {
-            targetUrl = srcMatch[1];
+            input = srcMatch[1];
         }
-    } else if (input.startsWith("http")) {
-        // Falls der Nutzer direkt die reine URL eingefügt hat
-        targetUrl = input;
     }
 
-    // Überprüfen, ob es sich um eine gültige aippy.live Adresse handelt
-    if (targetUrl && targetUrl.includes("aippy.live")) {
-        // Ersetzt HTML-Sicherheitszeichen (&amp;) falls vorhanden durch ein echtes &
-        targetUrl = targetUrl.replace(/&amp;/g, "&");
-        
-        // Öffnet das Spiel im neuen Tab – ohne Blockaden
-        window.open(targetUrl, '_blank');
+    // Bereinigung von HTML-Resten
+    input = input.replace(/&amp;/g, "&");
+
+    // Weg A: Es ist bereits ein direkter .live Link
+    if (input.includes("aippy.live")) {
+        window.open(input, '_blank');
+        return;
+    }
+
+    // Weg B: Es ist ein normaler aippy.ai Projekt-Link
+    if (input.includes("aippy.ai")) {
+        // Wir ziehen die eindeutige Projektkennung (z.B. 2dqs oder 1SFx) vom Ende der URL
+        const cleanUrl = input.replace(/\/\$/, ""); 
+        const urlParts = cleanUrl.split("-");
+        const projectId = urlParts[urlParts.length - 1];
+
+        if (projectId && projectId.length >= 3) {
+            // Umleitung auf das direkte, unbeschränkte Web-Player-Interface von Aippy
+            const dynamicRunUrl = `https://aippy.ai{projectId}`;
+            window.open(dynamicRunUrl, '_blank');
+        } else {
+            errorDiv.innerText = "Die Projekt-ID am Ende des Links konnte nicht erkannt werden.";
+            errorDiv.style.display = "block";
+        }
     } else {
-        errorDiv.innerText = "Fehler: Es konnte keine gültige 'aippy.live' Adresse im Text gefunden werden.";
+        errorDiv.innerText = "Fehler: Ungültiges Linkformat. Bitte einen aippy.ai-Link nutzen.";
         errorDiv.style.display = "block";
     }
 }
