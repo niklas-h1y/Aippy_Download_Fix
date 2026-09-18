@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - Debug Edition</title>
+    <title>Aippy Download Fix - Redirector</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -73,7 +73,6 @@
         button:hover {
             background-color: #00dd55;
         }
-        /* Style für das integrierte Log-Fenster */
         .debug-panel {
             margin-top: 20px;
             background-color: #070a12;
@@ -96,14 +95,14 @@
 <body>
 
 <div class="container">
-    <h1>Beta Version Auto Redirector</h1>
-    <p>Füge deinen Aippy-Link ein. Das integrierte Log-Fenster zeigt dir sofort alle Fehler und URLs live an!</p>
+    <h1>Aippy Live Redirector</h1>
+    <p>Paste your full Aippy preview link below to isolate the live frame and bypass download blocks!</p>
     
-    <input type="text" id="aippyUrl" placeholder="https://aippy.ai" autocomplete="off">
+    <input type="text" id="aippyUrl" placeholder="Paste your Aippy link here..." autocomplete="off">
     <br>
-    <button onclick="launchWithDebug()">Spiel unblockiert öffnen</button>
+    <button onclick="launchWithDebug()">Open Unrestricted Game</button>
     
-    <div class="debug-panel" id="debugLog">[System] Bereit für Link-Analyse...</div>
+    <div class="debug-panel" id="debugLog">[System] Ready for URL analysis...</div>
 </div>
 
 <script>
@@ -114,51 +113,38 @@ function addLog(text, type = 'info') {
     if (type === 'error') className = 'log-err';
     
     logBox.innerHTML += `<div class="${className}">[${type.toUpperCase()}] ${text}</div>`;
-    logBox.scrollTop = logBox.scrollHeight; // Scrollt automatisch nach unten
+    logBox.scrollTop = logBox.scrollHeight;
 }
 
 function launchWithDebug() {
     const inputUrl = document.getElementById('aippyUrl').value.trim();
     const logBox = document.getElementById('debugLog');
     
-    // Log-Fenster zurücksetzen
-    logBox.innerHTML = "<div>[SYSTEM] Starte Analyse...</div>";
+    logBox.innerHTML = "<div>[SYSTEM] Starting analysis...</div>";
 
     if (!inputUrl) {
-        addLog("Eingabefeld ist komplett leer!", "error");
+        addLog("Input field is completely empty!", "error");
         return;
     }
 
-    addLog(`Eingegebener Link: ${inputUrl}`, "info");
+    addLog(`Analyzing link: ${inputUrl}`, "info");
 
-    if (!inputUrl.includes("aippy.ai")) {
-        addLog("Ungültige Domain! Der Link muss 'aippy.ai' beinhalten.", "error");
+    // Fix: Allow checking for 'aippy' variations safely
+    if (!inputUrl.toLowerCase().includes("aippy")) {
+        addLog("Invalid URL! The link must belong to an Aippy project.", "error");
         return;
     }
 
-    // 1. Schritt: URL säubern
-    const cleanUrl = inputUrl.replace(/\/\$/, ""); 
-    addLog(`Bereinigter Link: ${cleanUrl}`, "info");
-
-    // 2. Schritt: URL in Teile zerlegen
-    const urlParts = cleanUrl.split("-");
-    addLog(`Erkannte URL-Segmente: ${urlParts.length}`, "info");
-
-    // 3. Schritt: Projekt-ID filtern
-    const projectId = urlParts[urlParts.length - 1];
-    addLog(`Gefundene ID am Ende: "${projectId}"`, "info");
-
-    if (projectId && projectId.length >= 3) {
-        // KORREKTUR: Wir bauen die URL jetzt absolut sicher mit festen Slashes zusammen!
-        const targetUrl = "https://aippy.ai" + projectId;
-        
-        addLog(`Zusammengebaute Ziel-URL: ${targetUrl}`, "info");
-        addLog("Öffne neuen Tab im Browser...", "warn");
-
-        // Startet das Spiel im unblockierten Webplayer-Modus
-        window.open(targetUrl, '_blank');
+    // Checking if they passed a direct iframe link vs general project page
+    if (inputUrl.includes("aippy.live")) {
+        addLog("Direct aippy.live link detected.", "info");
+        addLog("Opening unrestricted frame in new tab...", "warn");
+        window.open(inputUrl, '_blank');
     } else {
-        addLog("Fehler: Die Projekt-ID konnte nicht korrekt isoliert werden!", "error");
+        addLog("Standard project link detected. Attempting extraction...", "info");
+        // Fallback or automated parsing can be handled here if you ever expand it
+        addLog("Opening link directly to run your manual bookmarklet on!", "warn");
+        window.open(inputUrl, '_blank');
     }
 }
 </script>
