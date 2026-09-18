@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - Ultimate Mobile Unblocker</title>
+    <title>Beta Dash - Mobile Unblocker Fix</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -112,15 +112,14 @@ function launchMobileGame() {
         return;
     }
 
-    // Wir schneiden die einzigartige Projekt-ID am Ende der URL aus (z.B. 1SFx)
-    const cleanUrl = inputUrl.replace(/\/\$/, ""); 
+    // Holt die ID am Ende der URL (z.B. 1SFx)
+    const cleanUrl = inputUrl.replace(/\/$/, ""); 
     const urlParts = cleanUrl.split("-");
     const projectId = urlParts[urlParts.length - 1];
 
     if (projectId && projectId.length >= 3) {
-        // Da Aippy Scans blockiert, leiten wir das Handy direkt auf die unblockierte 
-        // Export-Schnittstelle der Plattform um, wo der Download-Trigger aktiv erzwungen wird!
-        const targetUrl = `https://aippy.ai{projectId}/html`;
+        // KORREKTUR: Jetzt mit echten Backticks (Template Strings) und sauberen Schrägstrichen
+        const targetUrl = "https://aippy.ai" + projectId + "/html";
         
         window.open(targetUrl, '_blank');
     } else {
