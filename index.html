@@ -38,8 +38,19 @@
         p {
             color: #94a3b8;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             line-height: 1.5;
+        }
+        .tip-box {
+            background-color: #1f293d;
+            border-left: 4px solid #ffaa00;
+            padding: 10px;
+            font-size: 11px;
+            color: #cbd5e1;
+            text-align: left;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            line-height: 1.4;
         }
         input[type="text"] {
             width: 100%;
@@ -98,7 +109,11 @@
     <h1>Beta Version Auto Redirector</h1>
     <p>Füge deinen Aippy-Link ein. Das integrierte Log-Fenster zeigt dir sofort alle Fehler und URLs live an!</p>
     
-    <input type="text" id="aippyUrl" placeholder="https://aippy.ai/..." autocomplete="off">
+    <div class="tip-box">
+        💡 **Mobile Web-Bypass:** Der Code blockiert den automatischen App-Start über einen No-Referrer Link. Verwende deine Eruda-Konsole im geöffneten Tab, um Iframe-Elemente auszulesen.
+    </div>
+
+    <input type="text" id="aippyUrl" placeholder="https://aippy.ai..." autocomplete="off">
     <br>
     <button onclick="launchWithDebug()">Spiel unblockiert öffnen</button>
     
@@ -134,18 +149,12 @@ function launchWithDebug() {
         return;
     }
 
-    // 1. Schritt: Trenne eventuelle URL-Parameter am Ende ab (alles ab dem '?')
-    const cleanBaseUrl = inputUrl.split('?')[0];
-    addLog(`Parameter entfernt. Basis-URL: ${cleanBaseUrl}`, "info");
-
-    // 2. Schritt: Extrahiere den kompletten Pfad nach der Hauptdomain
+    const cleanBaseUrl = inputUrl.split('?');
     const domainSearchString = "aippy.ai";
     const domainIndex = cleanBaseUrl.indexOf(domainSearchString);
     
-    // Holt alles ab dem Ende von "aippy.ai"
     let projectPath = cleanBaseUrl.substring(domainIndex + domainSearchString.length);
     
-    // Falls der Pfad nicht mit einem Schrägstrich anfängt, fügen wir einen hinzu
     if (!projectPath.startsWith("/")) {
         projectPath = "/" + projectPath;
     }
@@ -153,13 +162,28 @@ function launchWithDebug() {
     addLog(`Isolierter Projekt-Pfad: "${projectPath}"`, "info");
 
     if (projectPath && projectPath.length > 2) {
-        // Baut die Ziel-URL sauber zusammen
         const targetUrl = "https://aippy.ai" + projectPath;
-        
         addLog(`Zusammengebaute Ziel-URL: ${targetUrl}`, "info");
-        addLog("Öffne neuen Tab im Browser...", "warn");
 
-        window.open(targetUrl, '_blank');
+        // Link in die Zwischenablage kopieren
+        navigator.clipboard.writeText(targetUrl).then(() => {
+            addLog("✓ Link in Zwischenablage kopiert!", "info");
+        }).catch(err => {
+            addLog("Kopieren fehlgeschlagen! Berechtigung verweigert.", "error");
+        });
+
+        // Mobilen App-Start via unsichtbarem Link mit 'noreferrer' umgehen
+        addLog("Erzeuge Web-Bypass Link...", "warn");
+        const customLink = document.createElement('a');
+        customLink.href = targetUrl;
+        customLink.target = '_blank';
+        customLink.rel = 'noopener noreferrer'; 
+        
+        document.body.appendChild(customLink);
+        customLink.click();
+        document.body.removeChild(customLink);
+        
+        addLog("Öffne Web-Tab...", "info");
     } else {
         addLog("Fehler: Der Projekt-Pfad konnte nicht isoliert werden!", "error");
     }
