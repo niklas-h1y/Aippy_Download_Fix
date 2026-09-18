@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aippy Download Fix - Redirector</title>
+    <title>Beta Dash - Debug Edition</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -58,7 +58,7 @@
         }
         button {
             background-color: #00ff66;
-            color: #0b0f19;
+            color: #0b0b19;
             border: none;
             padding: 14px 28px;
             font-size: 16px;
@@ -95,14 +95,14 @@
 <body>
 
 <div class="container">
-    <h1>Aippy Live Redirector</h1>
-    <p>Paste your full Aippy preview link below to isolate the live frame and bypass download blocks!</p>
+    <h1>Beta Version Auto Redirector</h1>
+    <p>Füge deinen Aippy-Link ein. Das integrierte Log-Fenster zeigt dir sofort alle Fehler und URLs live an!</p>
     
-    <input type="text" id="aippyUrl" placeholder="Paste your Aippy link here..." autocomplete="off">
+    <input type="text" id="aippyUrl" placeholder="https://aippy.ai..." autocomplete="off">
     <br>
-    <button onclick="launchWithDebug()">Open Unrestricted Game</button>
+    <button onclick="launchWithDebug()">Spiel unblockiert öffnen</button>
     
-    <div class="debug-panel" id="debugLog">[System] Ready for URL analysis...</div>
+    <div class="debug-panel" id="debugLog">[System] Bereit für Link-Analyse...</div>
 </div>
 
 <script>
@@ -120,31 +120,41 @@ function launchWithDebug() {
     const inputUrl = document.getElementById('aippyUrl').value.trim();
     const logBox = document.getElementById('debugLog');
     
-    logBox.innerHTML = "<div>[SYSTEM] Starting analysis...</div>";
+    logBox.innerHTML = "<div>[SYSTEM] Starte Analyse...</div>";
 
     if (!inputUrl) {
-        addLog("Input field is completely empty!", "error");
+        addLog("Eingabefeld ist komplett leer!", "error");
         return;
     }
 
-    addLog(`Analyzing link: ${inputUrl}`, "info");
+    addLog(`Eingegebener Link: ${inputUrl}`, "info");
 
-    // Fix: Allow checking for 'aippy' variations safely
-    if (!inputUrl.toLowerCase().includes("aippy")) {
-        addLog("Invalid URL! The link must belong to an Aippy project.", "error");
+    if (!inputUrl.includes("aippy.ai")) {
+        addLog("Ungültige Domain! Der Link muss 'aippy.ai' beinhalten.", "error");
         return;
     }
 
-    // Checking if they passed a direct iframe link vs general project page
-    if (inputUrl.includes("aippy.live")) {
-        addLog("Direct aippy.live link detected.", "info");
-        addLog("Opening unrestricted frame in new tab...", "warn");
-        window.open(inputUrl, '_blank');
+    // 1. Schritt: Trenne eventuelle URL-Parameter am Ende ab (alles ab dem '?')
+    const urlWithoutParameters = inputUrl.split('?')[0];
+    addLog(`Parameter entfernt. Bereinigte URL: ${urlWithoutParameters}`, "info");
+
+    // 2. Schritt: Extrahiere den kompletten Pfad nach der Hauptdomain
+    const domainSearchString = "aippy.ai";
+    const domainIndex = urlWithoutParameters.indexOf(domainSearchString);
+    const projectPath = urlWithoutParameters.substring(domainIndex + domainSearchString.length);
+    
+    addLog(`Isolierter Projekt-Pfad: "${projectPath}"`, "info");
+
+    if (projectPath && projectPath.length > 2) {
+        // Baut die exakte Ziel-URL absolut fehlerfrei inklusive Schrägstrichen zusammen
+        const targetUrl = "https://aippy.ai" + projectPath;
+        
+        addLog(`Zusammengebaute Ziel-URL: ${targetUrl}`, "info");
+        addLog("Öffne neuen Tab im Browser...", "warn");
+
+        window.open(targetUrl, '_blank');
     } else {
-        addLog("Standard project link detected. Attempting extraction...", "info");
-        // Fallback or automated parsing can be handled here if you ever expand it!
-        addLog("Opening link directly to run your manual bookmarklet on!", "warn");
-        window.open(inputUrl, '_blank');
+        addLog("Fehler: Der Projekt-Pfad konnte nicht isoliert werden!", "error");
     }
 }
 </script>
