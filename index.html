@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - Universal Mobile Fix</title>
+    <title>Beta Dash - Ultimate Mobile Unblocker</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -78,77 +78,54 @@
         button:active {
             transform: scale(0.98);
         }
-        .status {
+        .error {
+            color: #ff4a4a;
             margin-top: 15px;
             font-size: 14px;
             display: none;
             font-weight: bold;
-            line-height: 1.4;
         }
-        .error { color: #ff4a4a; }
-        .loading { color: #00ff66; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Beta Dash Mobile Fix</h1>
-    <p>Füge einfach den normalen aippy.ai Link ein. Das Tool extrahiert das Spiel vollautomatisch für dein Handy!</p>
+    <p>Füge einfach den normalen aippy.ai Link ein. Das Tool bricht das Spiel ohne Installationen aus der Iframe-Sperre heraus!</p>
     
     <input type="text" id="aippyUrl" placeholder="https://aippy.ai" autocomplete="off">
     <br>
-    <button onclick="startMobileExtract()">Spiel unblockiert öffnen</button>
+    <button onclick="launchMobileGame()">Spiel unblockiert öffnen</button>
     
-    <div id="statusMessage" class="status"></div>
+    <div id="errorMessage" class="error"></div>
 </div>
 
 <script>
-async function startMobileExtract() {
+function launchMobileGame() {
     const inputUrl = document.getElementById('aippyUrl').value.trim();
-    const statusDiv = document.getElementById('statusMessage');
-    
-    statusDiv.className = "status";
-    statusDiv.style.display = "none";
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.style.display = "none";
 
     if (!inputUrl || !inputUrl.includes("aippy.ai")) {
-        statusDiv.innerText = "Bitte gib einen gültigen aippy.ai Link ein!";
-        statusDiv.classList.add("error");
-        statusDiv.style.display = "block";
+        errorDiv.innerText = "Bitte gib einen gültigen aippy.ai Link ein!";
+        errorDiv.style.display = "block";
         return;
     }
 
-    statusDiv.innerText = "Scanne Aippy-Server... Bitte warten...";
-    statusDiv.classList.add("loading");
-    statusDiv.style.display = "block";
+    // Wir schneiden die einzigartige Projekt-ID am Ende der URL aus (z.B. 1SFx)
+    const cleanUrl = inputUrl.replace(/\/\$/, ""); 
+    const urlParts = cleanUrl.split("-");
+    const projectId = urlParts[urlParts.length - 1];
 
-    // Wir nutzen den freien AllOrigins Open-Source Proxy, um den Iframe-Inhalt serverseitig zu holen
-    const universalProxy = `https://allorigins.win{encodeURIComponent(inputUrl)}`;
-
-    try {
-        const response = await fetch(universalProxy);
-        if (!response.ok) throw new Error();
+    if (projectId && projectId.length >= 3) {
+        // Da Aippy Scans blockiert, leiten wir das Handy direkt auf die unblockierte 
+        // Export-Schnittstelle der Plattform um, wo der Download-Trigger aktiv erzwungen wird!
+        const targetUrl = `https://aippy.ai{projectId}/html`;
         
-        const data = await response.json();
-        const serverHtml = data.contents;
-
-        // Sucht im HTML-Quellcode nach der echten, versteckten .live URL des Spiels
-        const urlRegex = /(https:\/\/[a-zA-Z0-9-]+\.aippy\.live[^\s"'>]*)/;
-        const match = serverHtml.match(urlRegex);
-
-        if (match && match) {
-            let cleanLiveUrl = match.replace(/&amp;/g, "&");
-            statusDiv.style.display = "none";
-            
-            // Öffnet das Spiel komplett isoliert in einem neuen Tab am Smartphone/Tablet
-            window.open(cleanLiveUrl, '_blank');
-        } else {
-            throw new Error();
-        }
-    } catch (e) {
-        // Fallback-Meldung, falls Aippy automatisierte Anfragen blockiert
-        statusDiv.innerHTML = "Automatische Erkennung blockiert.<br><span style='color:#ffaa00;'>Tipp: Klicke im Spiel kurz auf 'Remix' und füge DIESE URL hier ein!</span>";
-        statusDiv.className = "status error";
-        statusDiv.style.display = "block";
+        window.open(targetUrl, '_blank');
+    } else {
+        errorDiv.innerText = "Fehler: Die Projekt-ID (z.B. -1SFx) konnte am Ende des Links nicht gefunden werden.";
+        errorDiv.style.display = "block";
     }
 }
 </script>
