@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             text-align: center;
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
         }
         h1 {
@@ -33,9 +33,11 @@
             color: #aaaaaa;
             font-size: 14px;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
-        input[type="text"] {
-            width: 85%;
+        textarea {
+            width: 90%;
+            height: 80px;
             padding: 12px;
             border: 2px solid #333;
             border-radius: 6px;
@@ -45,8 +47,9 @@
             margin-bottom: 20px;
             outline: none;
             transition: border-color 0.3s;
+            resize: none;
         }
-        input[type="text"]:focus {
+        textarea:focus {
             border-color: #00ff88;
         }
         button {
@@ -77,43 +80,50 @@
 <body>
 
 <div class="container">
-    <h1>Aippy Downloader Fix</h1>
-    <p>Paste any unique Aippy project link below to dynamically open its full live site!</p>
+    <h1>Aippy Download-Fix</h1>
+    <p>Füge hier den kopierten <strong>src-Link</strong> oder den ganzen <strong>&lt;iframe&gt;-Code</strong> aus Eruda ein, um das Spiel mit funktionierendem Download direkt zu öffnen!</p>
     
-    <input type="text" id="projectUrl" placeholder="https://aippy.ai" autocomplete="off">
+    <textarea id="rawInput" placeholder="Hier den Link oder Iframe-Code einfügen (z.B. https://...)"></textarea>
     <br>
-    <button onclick="openLiveUrl()">Open Live Game</button>
+    <button onclick="extractAndOpen()">Spiel live öffnen</button>
     
     <div id="errorMessage" class="error"></div>
 </div>
 
 <script>
-function openLiveUrl() {
-    const input = document.getElementById('projectUrl').value.trim();
+function extractAndOpen() {
+    const input = document.getElementById('rawInput').value.trim();
     const errorDiv = document.getElementById('errorMessage');
     errorDiv.style.display = "none"; 
 
     if (!input) {
-        errorDiv.innerText = "Please enter a valid URL.";
+        errorDiv.innerText = "Bitte füge zuerst etwas ein.";
         errorDiv.style.display = "block";
         return;
     }
 
-    // Dynamic Extraction: Splits the URL by dashes and grabs the absolute final segment 
-    // (the unique alphanumeric code), removing trailing slashes if present.
-    const cleanUrl = input.replace(/\/\$/, ""); 
-    const urlParts = cleanUrl.split("-");
-    const projectId = urlParts[urlParts.length - 1];
+    let targetUrl = "";
 
-    // Ensures the code found looks like a valid alphanumeric project ID snippet
-    if (projectId && projectId.length >= 3) {
-        // Automatically formats the correct iframe-free subdomain for this specific game
-        const targetLiveUrl = `https://aippy.live{projectId}`;
+    // Falls der Nutzer den ganzen <iframe src="..."> Code eingefügt hat, filtern wir die URL heraus
+    if (input.includes("src=")) {
+        const srcMatch = input.match(/src=["'](https:\/\/[^"']+)["']/);
+        if (srcMatch && srcMatch[1]) {
+            targetUrl = srcMatch[1];
+        }
+    } else if (input.startsWith("http")) {
+        // Falls der Nutzer direkt die reine URL eingefügt hat
+        targetUrl = input;
+    }
 
-        // Triggers the window break-out to open the specific game page
-        window.open(targetLiveUrl, '_blank');
+    // Überprüfen, ob es sich um eine gültige aippy.live Adresse handelt
+    if (targetUrl && targetUrl.includes("aippy.live")) {
+        // Ersetzt HTML-Sicherheitszeichen (&amp;) falls vorhanden durch ein echtes &
+        targetUrl = targetUrl.replace(/&amp;/g, "&");
+        
+        // Öffnet das Spiel im neuen Tab – ohne Blockaden
+        window.open(targetUrl, '_blank');
     } else {
-        errorDiv.innerText = "Could not find a valid project ID at the end of the link. Make sure it looks like game-name-XXXX.";
+        errorDiv.innerText = "Fehler: Es konnte keine gültige 'aippy.live' Adresse im Text gefunden werden.";
         errorDiv.style.display = "block";
     }
 }
