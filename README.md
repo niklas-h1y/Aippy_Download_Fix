@@ -1,31 +1,23 @@
 # Aippy Download Fix 🚀
 
-A simple browser bookmarklet solution for Aippy creators to view live projects without restrictions and bypass blocked downloads.
+A powerful browser extension and helper toolkit for Aippy creators to bypass iframe download restrictions and open live projects in clean, independent browser tabs.
 
-## 📝 Background & The Problem
+## 🚀 Setup Guides
 
-When you preview or play a project on Aippy, the game/application runs inside an embedded window called an `<iframe>`. 
+Choose the installation method that fits your setup best:
 
-* **The Developer Oversight:** The Aippy developers forgot to include the `allow-downloads` attribute inside the code for this preview `<iframe>`.
-* **The Impact:** Because this security permission is missing, anytime your game or app tries to download a file to your computer during testing, the browser automatically blocks the download.
+### 1. 📝 Manual Steps (Recommended for Beginners)
+The fastest and easiest way to get started! You can use our interactive checklist or traditional manual script injection without installing any extra software.
+👉 **[Read the Manual Setup Guide (Manual_Steps.md)](Manual_Steps.md)**
 
-## 🛠️ The Solution: JavaScript Bookmarklet
-
-To bypass this restriction, I created a **JavaScript bookmarklet** (a standard browser bookmark containing executable code). 
-
-When clicked, the script runs the following steps in the background:
-1. It scans the page for the active live project frame (`iframe[src*="aippy.live"]`).
-2. It checks to make sure the frame is visible and actively running.
-3. It extracts the raw, direct web address (URL) of your project.
-4. It breaks the project out of the restricted preview frame and opens it directly in a **brand new browser tab**. Because it is open in its own tab, all download restrictions disappear, and downloads work perfectly!
+### 2. ⚙️ Advanced Setup (Optional Extension)
+If you develop frequently in Aippy and want a seamless, one-click experience, you can install this project as a native browser extension on your computer or mobile device.
+👉 **[Read the Extension Setup Guide (advanced_setup.md)](advanced_setup.md)**
 
 ---
 
-## 🚀 Getting Started
-
-Setting up the bookmarklet takes less than a minute. I have created an interactive checklist to guide you through the process:
-
-👉 **[Click here for the Step-by-Step Setup Guide (Manual_Steps.md)](Manual_Steps.md)**
+## 🛠️ How It Works (Behind the Scenes)
+Because Aippy operates with local browser scripting privileges, this toolkit instantly scans the active webpage DOM, automatically filters out hidden overlay layers, isolates the direct `*.aippy.live` source URL, and breaks your project out into an unrestricted tab with one single click.
 
 ---
-*Note: This tool does not modify any server-side data on Aippy. It simply opens the frame that your browser has already loaded into a clean, unrestricted window.*
+*Note: This toolkit runs 100% locally within your sandbox browser execution framework. It does not collect, process, or transmit any user data or personal project source files.*
