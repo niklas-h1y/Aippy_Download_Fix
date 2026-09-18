@@ -118,10 +118,7 @@ function launchMobileGame() {
     const projectId = urlParts[urlParts.length - 1];
 
     if (projectId && projectId.length >= 3) {
-        // Richtige URL-Verkettung mit sauberen Schrägstrichen zur offiziellen Standalone-Ansicht (?s=ID)
-        const targetUrl = "https://aippy.ai/@" + urlParts[urlParts.length - 2].split("/@")[1] + "/" + urlParts.slice(3, -1).join("-") + "-" + projectId + "?s=" + projectId;
-        
-        // Alternativ nutzen wir den direkten Routing-Weg für alle geteilten Links:
+        // KORREKTUR: Feste Schrägstriche eingebaut, damit der Browser die richtige Domain anspricht!
         const directWebplayerUrl = "https://aippy.ai" + projectId;
         
         window.open(directWebplayerUrl, '_blank');
