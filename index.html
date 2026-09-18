@@ -58,7 +58,7 @@
         }
         button {
             background-color: #00ff66;
-            color: #0b0b19;
+            color: #0b0f19;
             border: none;
             padding: 14px 28px;
             font-size: 16px;
@@ -98,7 +98,7 @@
     <h1>Beta Version Auto Redirector</h1>
     <p>Füge deinen Aippy-Link ein. Das integrierte Log-Fenster zeigt dir sofort alle Fehler und URLs live an!</p>
     
-    <input type="text" id="aippyUrl" placeholder="https://aippy.ai..." autocomplete="off">
+    <input type="text" id="aippyUrl" placeholder="https://aippy.ai/..." autocomplete="off">
     <br>
     <button onclick="launchWithDebug()">Spiel unblockiert öffnen</button>
     
@@ -135,18 +135,25 @@ function launchWithDebug() {
     }
 
     // 1. Schritt: Trenne eventuelle URL-Parameter am Ende ab (alles ab dem '?')
-    const urlWithoutParameters = inputUrl.split('?')[0];
-    addLog(`Parameter entfernt. Bereinigte URL: ${urlWithoutParameters}`, "info");
+    const cleanBaseUrl = inputUrl.split('?')[0];
+    addLog(`Parameter entfernt. Basis-URL: ${cleanBaseUrl}`, "info");
 
     // 2. Schritt: Extrahiere den kompletten Pfad nach der Hauptdomain
     const domainSearchString = "aippy.ai";
-    const domainIndex = urlWithoutParameters.indexOf(domainSearchString);
-    const projectPath = urlWithoutParameters.substring(domainIndex + domainSearchString.length);
+    const domainIndex = cleanBaseUrl.indexOf(domainSearchString);
+    
+    // Holt alles ab dem Ende von "aippy.ai"
+    let projectPath = cleanBaseUrl.substring(domainIndex + domainSearchString.length);
+    
+    // Falls der Pfad nicht mit einem Schrägstrich anfängt, fügen wir einen hinzu
+    if (!projectPath.startsWith("/")) {
+        projectPath = "/" + projectPath;
+    }
     
     addLog(`Isolierter Projekt-Pfad: "${projectPath}"`, "info");
 
     if (projectPath && projectPath.length > 2) {
-        // Baut die exakte Ziel-URL absolut fehlerfrei inklusive Schrägstrichen zusammen
+        // Baut die Ziel-URL sauber zusammen
         const targetUrl = "https://aippy.ai" + projectPath;
         
         addLog(`Zusammengebaute Ziel-URL: ${targetUrl}`, "info");
