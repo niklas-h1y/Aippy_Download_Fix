@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - One-Click Fix</title>
+    <title>Beta Dash - Instanter Download Fix</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0e14;
+            background-color: #0b0f19;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -16,35 +16,34 @@
             margin: 0;
         }
         .container {
-            background-color: #141923;
-            padding: 35px;
-            border-radius: 16px;
+            background-color: #161d2b;
+            padding: 30px;
+            border-radius: 12px;
             border: 2px solid #00ff66;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
             text-align: center;
-            max-width: 480px;
+            max-width: 460px;
             width: 100%;
         }
         h1 {
             color: #00ff66;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-size: 24px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
         }
         p {
-            color: #ccd6e0;
+            color: #94a3b8;
             font-size: 14px;
-            line-height: 1.5;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
         input[type="text"] {
             width: 88%;
             padding: 12px;
             border: 2px solid #2d3748;
-            border-radius: 8px;
-            background-color: #1a202c;
+            border-radius: 6px;
+            background-color: #1f293d;
             color: #ffffff;
             font-size: 14px;
             margin-bottom: 20px;
@@ -56,90 +55,64 @@
         }
         button {
             background-color: #00ff66;
-            color: #0a0e14;
+            color: #0b0f19;
             border: none;
-            padding: 14px 32px;
+            padding: 12px 28px;
             font-size: 16px;
             font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
         }
         button:hover {
             background-color: #00dd55;
         }
-        .status {
+        button:active {
+            transform: scale(0.98);
+        }
+        .error {
+            color: #ff4a4a;
             margin-top: 15px;
             font-size: 14px;
             display: none;
             font-weight: bold;
         }
-        .error { color: #ff4a4a; }
-        .loading { color: #00ff66; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Beta Dash Download-Fix</h1>
-    <p>Füge einfach den normalen aippy.ai-Spiele-Link hier ein. Das Tool durchsucht die HTML-Elemente automatisch nach der Live-URL.</p>
+    <h1>Beta Dash Link-Fixer</h1>
+    <p>Füge einfach den normalen Spiele-Link aus der Aippy-Adresszeile ein, um das Spiel direkt unblockiert zu starten!</p>
     
     <input type="text" id="aippyUrl" placeholder="https://aippy.ai" autocomplete="off">
     <br>
-    <button onclick="scanElements()">Spiel unblockiert öffnen</button>
+    <button onclick="convertAndOpen()">Spiel unblockiert öffnen</button>
     
-    <div id="statusMessage" class="status"></div>
+    <div id="errorMessage" class="error"></div>
 </div>
 
 <script>
-async function scanElements() {
-    const inputUrl = document.getElementById('aippyUrl').value.trim();
-    const statusDiv = document.getElementById('statusMessage');
-    
-    statusDiv.className = "status";
-    statusDiv.style.display = "none";
+function convertAndOpen() {
+    const input = document.getElementById('aippyUrl').value.trim();
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.style.display = "none"; 
 
-    if (!inputUrl || !inputUrl.includes("aippy.ai")) {
-        statusDiv.innerText = "Bitte füge einen gültigen aippy.ai Link ein!";
-        statusDiv.classList.add("error");
-        statusDiv.style.display = "block";
+    if (!input || !input.includes("aippy.ai/")) {
+        errorDiv.innerText = "Bitte füge einen gültigen aippy.ai Link ein!";
+        errorDiv.style.display = "block";
         return;
     }
 
-    statusDiv.innerText = "Durchsuche HTML-Elemente nach Live-Iframe...";
-    statusDiv.classList.add("loading");
-    statusDiv.style.display = "block";
-
-    // Wir rufen die öffentliche AllOrigins-API auf, um den Quelltext der Aippy-Seite im Hintergrund zu laden
-    const apiQuery = `https://allorigins.win{encodeURIComponent(inputUrl)}`;
-
-    try {
-        const response = await fetch(apiQuery);
-        if (!response.ok) throw new Error("API-Fehler");
+    // Wandelt den normalen Link vollautomatisch in die IFrame-freie Embed-Ansicht um
+    if (input.includes("aippy.ai/@")) {
+        const targetUrl = input.replace("aippy.ai/", "aippy.ai/embed/");
         
-        const data = await response.json();
-        const fullHtml = data.contents; // Der rohe HTML-Inhalt der Zielseite
-
-        // Regulärer Ausdruck durchsucht alle Code-Elemente nach der aippy.live-Adresse
-        const iframeSrcRegex = /(https:\/\/[a-zA-Z0-9-]+\.aippy\.live[^\s"'>]*)/;
-        const match = fullHtml.match(iframeSrcRegex);
-
-        if (match && match[0]) {
-            // Bereinigt codierte HTML-Zeichen (&amp;) für die URL-Parameter (?v=...)
-            let realLiveUrl = match[0].replace(/&amp;/g, "&");
-            
-            statusDiv.style.display = "none";
-            // Öffnet die gefundene Live-URL direkt ohne Einschränkungen
-            window.open(realLiveUrl, '_blank');
-        } else {
-            throw new Error("Iframe-URL nicht im Code gefunden");
-        }
-
-    } catch (error) {
-        statusDiv.innerText = "Fehler beim Auslesen. Stelle sicher, dass das Aippy-Projekt öffentlich ist!";
-        statusDiv.className = "status error";
-        statusDiv.style.display = "block";
+        // Öffnet das Spiel im Vollbild – der Download-Button funktioniert sofort!
+        window.open(targetUrl, '_blank');
+    } else {
+        errorDiv.innerText = "Ungültiges Linkformat. Der Link muss ein '@' Zeichen enthalten.";
+        errorDiv.style.display = "block";
     }
 }
 </script>
