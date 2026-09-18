@@ -91,7 +91,7 @@
 
 <div class="container">
     <h1>Beta Dash Mobile Fix</h1>
-    <p>Füge einfach den normalen aippy.ai Link ein. Das Tool bricht das Spiel ohne Installationen aus der Iframe-Sperre heraus!</p>
+    <p>Füge einfach den normalen aippy.ai Link ein. Das Tool startet das Spiel unblockiert direkt im Vollbild-Webplayer deines Handys!</p>
     
     <input type="text" id="aippyUrl" placeholder="https://aippy.ai" autocomplete="off">
     <br>
@@ -112,16 +112,19 @@ function launchMobileGame() {
         return;
     }
 
-    // Holt die ID am Ende der URL (z.B. 1SFx)
+    // Zieht die ID sauber vom Ende ab (z.B. 1SFx)
     const cleanUrl = inputUrl.replace(/\/$/, ""); 
     const urlParts = cleanUrl.split("-");
     const projectId = urlParts[urlParts.length - 1];
 
     if (projectId && projectId.length >= 3) {
-        // KORREKTUR: Jetzt mit echten Backticks (Template Strings) und sauberen Schrägstrichen
-        const targetUrl = "https://aippy.ai" + projectId + "/html";
+        // Richtige URL-Verkettung mit sauberen Schrägstrichen zur offiziellen Standalone-Ansicht (?s=ID)
+        const targetUrl = "https://aippy.ai/@" + urlParts[urlParts.length - 2].split("/@")[1] + "/" + urlParts.slice(3, -1).join("-") + "-" + projectId + "?s=" + projectId;
         
-        window.open(targetUrl, '_blank');
+        // Alternativ nutzen wir den direkten Routing-Weg für alle geteilten Links:
+        const directWebplayerUrl = "https://aippy.ai" + projectId;
+        
+        window.open(directWebplayerUrl, '_blank');
     } else {
         errorDiv.innerText = "Fehler: Die Projekt-ID (z.B. -1SFx) konnte am Ende des Links nicht gefunden werden.";
         errorDiv.style.display = "block";
