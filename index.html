@@ -1,131 +1,177 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Dash - Debug Edition</title>
+    <title>Aippy Download Link Helper</title>
     <style>
+        :root {
+            --bg-main: #0d1117;
+            --bg-card: #161b22;
+            --bg-input: #21262d;
+            --border-color: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-orange: #f0883e;
+            --log-info: #58a6ff;
+            --log-warn: #f0883e;
+            --log-error: #ff7b72;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0b0f19;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 15px;
-            box-sizing: border-box;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .container {
-            background-color: #161d2b;
-            padding: 30px;
-            border-radius: 16px;
-            border: 2px solid #00ff66;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
-            text-align: center;
-            max-width: 460px;
+
+        .wrapper {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
             width: 100%;
-            box-sizing: border-box;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
         }
+
         h1 {
-            color: #00ff66;
-            margin-bottom: 10px;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            text-align: center;
         }
-        p {
-            color: #94a3b8;
+
+        .subtitle {
+            color: var(--text-secondary);
             font-size: 14px;
-            margin-bottom: 20px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .alert-box {
+            background-color: rgba(240, 136, 62, 0.1);
+            border-left: 4px solid var(--accent-orange);
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #ffb47a;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 24px;
             line-height: 1.5;
         }
-        .tip-box {
-            background-color: #1f293d;
-            border-left: 4px solid #ffaa00;
-            padding: 10px;
-            font-size: 11px;
-            color: #cbd5e1;
-            text-align: left;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            line-height: 1.4;
+
+        .input-group {
+            margin-bottom: 16px;
         }
+
         input[type="text"] {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #2d3748;
-            border-radius: 8px;
-            background-color: #1f293d;
-            color: #ffffff;
+            padding: 12px 16px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
             font-size: 14px;
-            margin-bottom: 20px;
             outline: none;
-            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
+
         input[type="text"]:focus {
-            border-color: #00ff66;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
         }
+
         button {
-            background-color: #00ff66;
-            color: #0b0f19;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 8px;
-            cursor: pointer;
             width: 100%;
-            box-sizing: border-box;
-            transition: background-color 0.2s;
+            padding: 12px 24px;
+            background-color: #218838;
+            color: #ffffff;
+            border: 1px solid rgba(27, 31, 35, 0.15);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
+
         button:hover {
-            background-color: #00dd55;
+            background-color: #22863a;
         }
-        .debug-panel {
-            margin-top: 20px;
-            background-color: #070a12;
-            border: 1px solid #2d3748;
-            border-radius: 8px;
-            padding: 12px;
-            text-align: left;
-            font-family: 'Courier New', Courier, monospace;
+
+        button:active {
+            background-color: #1e7534;
+        }
+
+        .console-title {
             font-size: 12px;
-            max-height: 150px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-top: 24px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-align: left;
+        }
+
+        .log-viewport {
+            background-color: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 160px;
             overflow-y: auto;
+            text-align: left;
             white-space: pre-wrap;
             word-break: break-all;
         }
-        .log-info { color: #00ff66; }
-        .log-warn { color: #ffaa00; }
-        .log-err { color: #ff4a4a; }
+
+        .info-msg { color: var(--log-info); }
+        .warn-msg { color: var(--log-warn); }
+        .error-msg { color: var(--log-error); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Beta Version Auto Redirector</h1>
-    <p>Füge deinen Aippy-Link ein. Das integrierte Log-Fenster zeigt dir sofort alle Fehler und URLs live an!</p>
+<div class="wrapper">
+    <h1>Aippy Link Assistant</h1>
+    <div class="subtitle">Enter your project view link below to clean the path parameters, copy the direct target URL, and open it cleanly in your web browser.</div>
     
-    <div class="tip-box">
-        💡 **Mobile Web-Bypass:** Der Code blockiert den automatischen App-Start über einen No-Referrer Link. Verwende deine Eruda-Konsole im geöffneten Tab, um Iframe-Elemente auszulesen.
+    <div class="alert-box">
+        <strong>Mobile Notice:</strong> If this link attempts to auto-launch a native app store or app instance, your clean link is already safely copied to your clipboard. Simply open an Incognito Tab and paste it manually.
     </div>
 
-    <input type="text" id="aippyUrl" placeholder="https://aippy.ai..." autocomplete="off">
-    <br>
-    <button onclick="launchWithDebug()">Spiel unblockiert öffnen</button>
+    <div class="input-group">
+        <input type="text" id="aippyUrl" placeholder="https://aippy.ai..." autocomplete="off">
+    </div>
+    <button onclick="launchWithDebug()">Open Link</button>
     
-    <div class="debug-panel" id="debugLog">[System] Bereit für Link-Analyse...</div>
+    <div class="console-title">Process Logs</div>
+    <div class="log-viewport" id="debugLog">[System] Awaiting Aippy link structure input...</div>
 </div>
 
 <script>
 function addLog(text, type = 'info') {
     const logBox = document.getElementById('debugLog');
-    let className = 'log-info';
-    if (type === 'warn') className = 'log-warn';
-    if (type === 'error') className = 'log-err';
+    let className = 'info-msg';
+    if (type === 'warn') className = 'warn-msg';
+    if (type === 'error') className = 'error-msg';
     
     logBox.innerHTML += `<div class="${className}">[${type.toUpperCase()}] ${text}</div>`;
     logBox.scrollTop = logBox.scrollHeight;
@@ -135,21 +181,23 @@ function launchWithDebug() {
     const inputUrl = document.getElementById('aippyUrl').value.trim();
     const logBox = document.getElementById('debugLog');
     
-    logBox.innerHTML = "<div>[SYSTEM] Starte Analyse...</div>";
+    logBox.innerHTML = "<div>[SYSTEM] Initializing string evaluation...</div>";
 
     if (!inputUrl) {
-        addLog("Eingabefeld ist komplett leer!", "error");
+        addLog("The text input container is empty.", "error");
         return;
     }
 
-    addLog(`Eingegebener Link: ${inputUrl}`, "info");
+    addLog(`Target Link: ${inputUrl}`, "info");
 
     if (!inputUrl.includes("aippy.ai")) {
-        addLog("Ungültige Domain! Der Link muss 'aippy.ai' beinhalten.", "error");
+        addLog("Domain validation failed. Link must contain 'aippy.ai'.", "error");
         return;
     }
 
-    const cleanBaseUrl = inputUrl.split('?');
+    const cleanBaseUrl = inputUrl.split('?')[0];
+    addLog(`Parameters stripped. Base clean string: ${cleanBaseUrl}`, "info");
+
     const domainSearchString = "aippy.ai";
     const domainIndex = cleanBaseUrl.indexOf(domainSearchString);
     
@@ -159,21 +207,19 @@ function launchWithDebug() {
         projectPath = "/" + projectPath;
     }
     
-    addLog(`Isolierter Projekt-Pfad: "${projectPath}"`, "info");
+    addLog(`Isolated sub-directory path: "${projectPath}"`, "info");
 
     if (projectPath && projectPath.length > 2) {
         const targetUrl = "https://aippy.ai" + projectPath;
-        addLog(`Zusammengebaute Ziel-URL: ${targetUrl}`, "info");
+        addLog(`Constructed URL target: ${targetUrl}`, "info");
 
-        // Link in die Zwischenablage kopieren
         navigator.clipboard.writeText(targetUrl).then(() => {
-            addLog("✓ Link in Zwischenablage kopiert!", "info");
+            addLog("✓ Target link copied securely to internal clipboard history.", "info");
         }).catch(err => {
-            addLog("Kopieren fehlgeschlagen! Berechtigung verweigert.", "error");
+            addLog("Clipboard transfer rejected. Verify browser execution permissions.", "error");
         });
 
-        // Mobilen App-Start via unsichtbarem Link mit 'noreferrer' umgehen
-        addLog("Erzeuge Web-Bypass Link...", "warn");
+        addLog("Launching link context using decoupled web runner configurations...", "warn");
         const customLink = document.createElement('a');
         customLink.href = targetUrl;
         customLink.target = '_blank';
@@ -182,10 +228,8 @@ function launchWithDebug() {
         document.body.appendChild(customLink);
         customLink.click();
         document.body.removeChild(customLink);
-        
-        addLog("Öffne Web-Tab...", "info");
     } else {
-        addLog("Fehler: Der Projekt-Pfad konnte nicht isoliert werden!", "error");
+        addLog("Processing error: Unable to map context sub-directories safely.", "error");
     }
 }
 </script>
